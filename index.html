@@ -312,50 +312,67 @@
 
         function createLeBronJames() {
             lebronGroup = new THREE.Group();
-            //test
-
+            // Make LeBron bigger by scaling up all parts
             // Body (jersey)
-            const bodyGeometry = new THREE.CylinderGeometry(0.4, 0.5, 2, 16);
+            const bodyGeometry = new THREE.CylinderGeometry(0.6, 0.75, 3, 16); // larger
             const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0xfdd835 }); // Lakers gold
             const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-            body.position.set(0, 1, 2);
+            body.position.set(0, 1.5, 2);
             lebronGroup.add(body);
 
             // Head
-            const headGeometry = new THREE.SphereGeometry(0.35, 16, 16);
+            const headGeometry = new THREE.SphereGeometry(0.55, 16, 16); // larger
             const headMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 }); // Brown skin tone
             const head = new THREE.Mesh(headGeometry, headMaterial);
-            head.position.set(0, 2.3, 2);
+            head.position.set(0, 3.2, 2);
             lebronGroup.add(head);
 
             // Arms
-            const armGeometry = new THREE.CylinderGeometry(0.12, 0.12, 1.2, 12);
+            const armGeometry = new THREE.CylinderGeometry(0.18, 0.18, 1.8, 12); // larger
             const armMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 });
             const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-            leftArm.position.set(-0.55, 1.7, 2);
+            leftArm.position.set(-0.85, 2.4, 2);
             leftArm.rotation.z = Math.PI / 5;
             lebronGroup.add(leftArm);
             const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-            rightArm.position.set(0.55, 1.7, 2);
+            rightArm.position.set(0.85, 2.4, 2);
             rightArm.rotation.z = -Math.PI / 5;
             lebronGroup.add(rightArm);
 
             // Legs
-            const legGeometry = new THREE.CylinderGeometry(0.15, 0.15, 1.3, 12);
+            const legGeometry = new THREE.CylinderGeometry(0.22, 0.22, 2, 12); // larger
             const legMaterial = new THREE.MeshLambertMaterial({ color: 0x283593 }); // Lakers purple shorts
             const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-            leftLeg.position.set(-0.18, 0.1, 2);
+            leftLeg.position.set(-0.28, 0.3, 2);
             lebronGroup.add(leftLeg);
             const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
-            rightLeg.position.set(0.18, 0.1, 2);
+            rightLeg.position.set(0.28, 0.3, 2);
             lebronGroup.add(rightLeg);
 
             // Jersey number (23) as a white circle on the chest
-            const numberGeometry = new THREE.CircleGeometry(0.18, 16);
+            const numberGeometry = new THREE.CircleGeometry(0.28, 16); // larger
             const numberMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
             const numberCircle = new THREE.Mesh(numberGeometry, numberMaterial);
-            numberCircle.position.set(0, 1.5, 2.41);
+            numberCircle.position.set(0, 2.2, 2.61);
             lebronGroup.add(numberCircle);
+
+            // Add '23' to the back of the jersey using a canvas texture and sprite
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 128, 128);
+            ctx.font = 'bold 64px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('23', 64, 64);
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const numberSprite = new THREE.Sprite(spriteMaterial);
+            numberSprite.scale.set(0.9, 0.9, 1); // size to fit the back
+            numberSprite.position.set(0, 2.2, 1.25); // slightly behind the body
+            lebronGroup.add(numberSprite);
 
             // Add to scene
             scene.add(lebronGroup);
