@@ -322,7 +322,53 @@
 
             // Head
             const headGeometry = new THREE.SphereGeometry(0.55, 16, 16); // larger
-            const headMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 }); // Brown skin tone
+            // Create a canvas texture for the face
+            const faceCanvas = document.createElement('canvas');
+            faceCanvas.width = 128;
+            faceCanvas.height = 128;
+            const faceCtx = faceCanvas.getContext('2d');
+            faceCtx.fillStyle = '#8d5524'; // base skin
+            faceCtx.fillRect(0, 0, 128, 128);
+            // Eyes
+            faceCtx.beginPath();
+            faceCtx.arc(44, 60, 8, 0, Math.PI * 2); // left eye
+            faceCtx.arc(84, 60, 8, 0, Math.PI * 2); // right eye
+            faceCtx.fillStyle = '#222';
+            faceCtx.fill();
+            // Eyebrows
+            faceCtx.strokeStyle = '#3e2723';
+            faceCtx.lineWidth = 4;
+            faceCtx.beginPath();
+            faceCtx.moveTo(34, 50); faceCtx.lineTo(54, 54);
+            faceCtx.moveTo(74, 54); faceCtx.lineTo(94, 50);
+            faceCtx.stroke();
+            // Mouth
+            faceCtx.beginPath();
+            faceCtx.arc(64, 90, 18, 0, Math.PI, false);
+            faceCtx.lineWidth = 5;
+            faceCtx.strokeStyle = '#3e2723';
+            faceCtx.stroke();
+            // Beard (bottom half arc)
+            faceCtx.beginPath();
+            faceCtx.arc(64, 80, 32, 0, Math.PI, false);
+            faceCtx.lineWidth = 10;
+            faceCtx.strokeStyle = '#3e2723';
+            faceCtx.stroke();
+            // Mustache
+            faceCtx.beginPath();
+            faceCtx.arc(64, 80, 18, Math.PI * 0.1, Math.PI * 0.9, false);
+            faceCtx.lineWidth = 6;
+            faceCtx.strokeStyle = '#3e2723';
+            faceCtx.stroke();
+            // Hair (top arc)
+            faceCtx.beginPath();
+            faceCtx.arc(64, 48, 40, Math.PI, 2 * Math.PI, false);
+            faceCtx.lineWidth = 18;
+            faceCtx.strokeStyle = '#3e2723';
+            faceCtx.stroke();
+            // Create texture
+            const faceTexture = new THREE.CanvasTexture(faceCanvas);
+            const headMaterial = new THREE.MeshLambertMaterial({ map: faceTexture });
             const head = new THREE.Mesh(headGeometry, headMaterial);
             head.position.set(0, 3.2, 2);
             lebronGroup.add(head);
