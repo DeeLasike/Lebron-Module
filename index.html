@@ -147,7 +147,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Global variables
-        let scene, camera, renderer, basketball, court, crown, particles = [], lightingMode = 0;
+        let scene, camera, renderer, basketball, court, particles = [], lightingMode = 0;
         let isRotating = true, animationId;
         let basketballGroup, courtGroup, particleSystem, lebronGroup;
 
@@ -177,9 +177,6 @@
 
             // Create basketball
             createBasketball();
-
-            // Create crown (representing LeBron as "The King")
-            createCrown();
 
             // Create particle system
             createParticleSystem();
@@ -288,33 +285,6 @@
             scene.add(basketballGroup);
         }
 
-        function createCrown() {
-            const crownGroup = new THREE.Group();
-
-            // Crown base
-            const crownGeometry = new THREE.CylinderGeometry(1, 1.2, 0.3, 8);
-            const crownMaterial = new THREE.MeshLambertMaterial({ color: 0xffd700 });
-            crown = new THREE.Mesh(crownGeometry, crownMaterial);
-            crown.position.set(3, 4, 0);
-            crown.castShadow = true;
-            crownGroup.add(crown);
-
-            // Crown spikes
-            for (let i = 0; i < 8; i++) {
-                const spikeGeometry = new THREE.ConeGeometry(0.1, 0.5, 4);
-                const spike = new THREE.Mesh(spikeGeometry, crownMaterial);
-                const angle = (i / 8) * Math.PI * 2;
-                spike.position.set(
-                    3 + Math.cos(angle) * 1.1,
-                    4.4,
-                    Math.sin(angle) * 1.1
-                );
-                crownGroup.add(spike);
-            }
-
-            scene.add(crownGroup);
-        }
-
         function createParticleSystem() {
             const particleCount = 100;
             const particleGeometry = new THREE.BufferGeometry();
@@ -398,11 +368,6 @@
             if (basketball) {
                 basketball.rotation.x += 0.01;
                 basketball.rotation.y += 0.01;
-            }
-
-            // Rotate crown
-            if (crown && isRotating) {
-                crown.rotation.y += 0.02;
             }
 
             // Animate particles
