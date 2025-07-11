@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, #552583, #FDB927);
+    font-family: Arial, sans-serif;
+}
+
+#container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#controls {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+button {
+    background: #FDB927;
+    color: #552583;
+    border: none;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #552583;
+    color: #FDB927;
+}
