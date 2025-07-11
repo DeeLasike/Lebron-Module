@@ -185,18 +185,97 @@
             rightEye.position.set(0.08, 2.35, 0.18);
             group.add(rightEye);
             
+            // Hair - LeBron's signature look
+            const hairMaterial = new THREE.MeshLambertMaterial({ color: 0x2C1810 }); // Dark brown/black
+            
+            // Main hair on top (receding hairline style)
+            const topHairGeometry = new THREE.SphereGeometry(0.2, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.6);
+            const topHair = new THREE.Mesh(topHairGeometry, hairMaterial);
+            topHair.position.set(0, 2.42, -0.08);
+            topHair.scale.set(1, 0.7, 1.2);
+            group.add(topHair);
+            
+            // Side hair patches
+            const sideHairGeometry = new THREE.SphereGeometry(0.12, 8, 8);
+            
+            const leftSideHair = new THREE.Mesh(sideHairGeometry, hairMaterial);
+            leftSideHair.position.set(-0.18, 2.35, -0.05);
+            leftSideHair.scale.set(1, 0.8, 0.9);
+            group.add(leftSideHair);
+            
+            const rightSideHair = new THREE.Mesh(sideHairGeometry, hairMaterial);
+            rightSideHair.position.set(0.18, 2.35, -0.05);
+            rightSideHair.scale.set(1, 0.8, 0.9);
+            group.add(rightSideHair);
+            
+            // Back hair
+            const backHairGeometry = new THREE.SphereGeometry(0.15, 10, 8);
+            const backHair = new THREE.Mesh(backHairGeometry, hairMaterial);
+            backHair.position.set(0, 2.38, -0.15);
+            backHair.scale.set(1.2, 0.6, 1);
+            group.add(backHair);
+            
+            // Beard - LeBron's signature facial hair
+            const beardMaterial = new THREE.MeshLambertMaterial({ color: 0x1A0F08 }); // Slightly darker for beard
+            
+            // Main beard area
+            const beardGeometry = new THREE.SphereGeometry(0.15, 10, 8, 0, Math.PI * 2, Math.PI * 0.3, Math.PI * 0.4);
+            const beard = new THREE.Mesh(beardGeometry, beardMaterial);
+            beard.position.set(0, 2.15, 0.15);
+            beard.scale.set(1.1, 1, 1.2);
+            group.add(beard);
+            
+            // Mustache
+            const mustacheGeometry = new THREE.BoxGeometry(0.12, 0.04, 0.06);
+            const mustache = new THREE.Mesh(mustacheGeometry, beardMaterial);
+            mustache.position.set(0, 2.25, 0.19);
+            group.add(mustache);
+            
+            // Goatee extension
+            const goateeGeometry = new THREE.BoxGeometry(0.08, 0.12, 0.05);
+            const goatee = new THREE.Mesh(goateeGeometry, beardMaterial);
+            goatee.position.set(0, 2.08, 0.18);
+            group.add(goatee);
+            
+            // Side beard patches (connecting to sideburns)
+            const sideBeardGeometry = new THREE.BoxGeometry(0.06, 0.1, 0.04);
+            
+            const leftSideBeard = new THREE.Mesh(sideBeardGeometry, beardMaterial);
+            leftSideBeard.position.set(-0.12, 2.18, 0.16);
+            leftSideBeard.rotation.y = -0.3;
+            group.add(leftSideBeard);
+            
+            const rightSideBeard = new THREE.Mesh(sideBeardGeometry, beardMaterial);
+            rightSideBeard.position.set(0.12, 2.18, 0.16);
+            rightSideBeard.rotation.y = 0.3;
+            group.add(rightSideBeard);
+            
+            // Eyebrows
+            const eyebrowGeometry = new THREE.BoxGeometry(0.08, 0.02, 0.03);
+            const eyebrowMaterial = new THREE.MeshLambertMaterial({ color: 0x2C1810 });
+            
+            const leftEyebrow = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
+            leftEyebrow.position.set(-0.08, 2.42, 0.16);
+            leftEyebrow.rotation.z = 0.1;
+            group.add(leftEyebrow);
+            
+            const rightEyebrow = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
+            rightEyebrow.position.set(0.08, 2.42, 0.16);
+            rightEyebrow.rotation.z = -0.1;
+            group.add(rightEyebrow);
+            
             // Arms
             const armGeometry = new THREE.CylinderGeometry(0.08, 0.06, 0.8, 8);
             
             const leftArm = new THREE.Mesh(armGeometry, skinMaterial);
-            leftArm.position.set(-0.45, 1.6, 0);
-            leftArm.rotation.z = Math.PI / 6;
+            leftArm.position.set(-0.35, 1.3, 0);
+            leftArm.rotation.z = Math.PI / 12; // Much more relaxed angle
             leftArm.castShadow = true;
             group.add(leftArm);
             
             const rightArm = new THREE.Mesh(armGeometry, skinMaterial);
-            rightArm.position.set(0.45, 1.6, 0);
-            rightArm.rotation.z = -Math.PI / 6;
+            rightArm.position.set(0.35, 1.3, 0);
+            rightArm.rotation.z = -Math.PI / 12; // Much more relaxed angle
             rightArm.castShadow = true;
             group.add(rightArm);
             
@@ -204,12 +283,12 @@
             const handGeometry = new THREE.SphereGeometry(0.08, 8, 8);
             
             const leftHand = new THREE.Mesh(handGeometry, skinMaterial);
-            leftHand.position.set(-0.7, 1.2, 0);
+            leftHand.position.set(-0.45, 0.95, 0); // Lower and closer to body
             leftHand.castShadow = true;
             group.add(leftHand);
             
             const rightHand = new THREE.Mesh(handGeometry, skinMaterial);
-            rightHand.position.set(0.7, 1.2, 0);
+            rightHand.position.set(0.45, 0.95, 0); // Lower and closer to body
             rightHand.castShadow = true;
             group.add(rightHand);
             
@@ -356,7 +435,7 @@
             const ballGeometry = new THREE.SphereGeometry(0.12, 16, 16);
             const ballMaterial = new THREE.MeshLambertMaterial({ color: 0xD2691E });
             basketball = new THREE.Mesh(ballGeometry, ballMaterial);
-            basketball.position.set(-0.8, 1.2, 0.2);
+            basketball.position.set(-0.6, 0.95, 0.2); // Positioned near the left hand
             basketball.castShadow = true;
             
             // Basketball lines
@@ -379,7 +458,7 @@
             const textGeometry = new THREE.BoxGeometry(0.08, 0.02, 0.001);
             const textMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
             const spaldingText = new THREE.Mesh(textGeometry, textMaterial);
-            spaldingText.position.set(-0.8, 1.32, 0.2);
+            spaldingText.position.set(-0.6, 1.07, 0.2); // Adjusted to match new ball position
             scene.add(spaldingText);
         }
         
@@ -432,7 +511,7 @@
             // Animate dribbling motion
             const tl = new TimelineMax({ repeat: 3 });
             tl.to(basketball.position, 0.3, { y: 0.5 })
-              .to(basketball.position, 0.3, { y: 1.2 })
+              .to(basketball.position, 0.3, { y: 0.95 }) // Return to new hand level
               .to(basketball.rotation, 0.6, { x: Math.PI * 2 }, 0);
         }
         
@@ -441,15 +520,15 @@
             
             // Reset to original pose
             lebronModel.rotation.set(0, 0, 0);
-            basketball.position.set(-0.8, 1.2, 0.2);
+            basketball.position.set(-0.6, 0.95, 0.2); // Updated to match new relaxed position
             basketball.rotation.set(0, 0, 0);
             
-            // Reset arm positions
+            // Reset arm positions to relaxed state
             lebronModel.children.forEach((child, index) => {
-                if (index === 3) { // Left arm
-                    child.rotation.z = Math.PI / 6;
-                } else if (index === 4) { // Right arm
-                    child.rotation.z = -Math.PI / 6;
+                if (index === 19) { // Left arm (adjusted index after adding hair/beard)
+                    child.rotation.z = Math.PI / 12;
+                } else if (index === 20) { // Right arm (adjusted index after adding hair/beard)
+                    child.rotation.z = -Math.PI / 12;
                 }
             });
         }
