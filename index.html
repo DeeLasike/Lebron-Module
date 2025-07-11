@@ -3,587 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeBron James Module - Three.js</title>
+    <title>LeBron James 3D Model - Lakers #23</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
             overflow: hidden;
+            background: linear-gradient(135deg, #552583, #FDB927);
+            font-family: Arial, sans-serif;
         }
-
+        
         #container {
             position: relative;
             width: 100vw;
             height: 100vh;
         }
-
-        #info-panel {
+        
+        #info {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #ffd700;
-            z-index: 100;
-            max-width: 300px;
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-            padding: 5px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .stat-label {
-            color: #ffd700;
-            font-weight: bold;
-        }
-
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            z-index: 100;
-        }
-
-        .control-btn {
-            background: linear-gradient(45deg, #6a1b9a, #8e24aa);
+            top: 10px;
+            left: 10px;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .control-btn:hover {
-            background: linear-gradient(45deg, #8e24aa, #ab47bc);
-            transform: scale(1.05);
-        }
-
-        #title {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
         }
-
-        #loading {
+        
+        #controls {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            color: #ffd700;
-            z-index: 200;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
         }
-
-        .achievement {
-            background: linear-gradient(45deg, #ffd700, #ffb300);
-            color: #1a1a2e;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 12px;
+        
+        button {
+            background: #FDB927;
+            color: #552583;
+            border: none;
+            padding: 8px 12px;
             margin: 2px;
-            display: inline-block;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #552583;
+            color: #FDB927;
         }
     </style>
 </head>
 <body>
     <div id="container">
-        <div id="loading">Loading LeBron James Module...</div>
-        
-        <div id="title">🏀 LEBRON JAMES MODULE</div>
-        
-        <div id="info-panel">
-            <h3 style="color: #ffd700; margin-bottom: 15px;">👑 The King</h3>
-            <div class="stat-item">
-                <span class="stat-label">Points:</span>
-                <span id="points">40,474</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Assists:</span>
-                <span id="assists">11,009</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Rebounds:</span>
-                <span id="rebounds">11,185</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Championships:</span>
-                <span id="championships">4</span>
-            </div>
-            <div style="margin-top: 15px;">
-                <div class="achievement">Finals MVP</div>
-                <div class="achievement">4x Champion</div>
-                <div class="achievement">All-Time Scorer</div>
-            </div>
+        <div id="info">
+            <h3>LeBron James - Lakers #23</h3>
+            <p>3D Model with detailed jersey and body features</p>
         </div>
-
-        <div class="controls">
-            <button class="control-btn" onclick="animateBasketball()">🏀 Shoot Ball</button>
-            <button class="control-btn" onclick="changeLighting()">💡 Lighting</button>
-            <button class="control-btn" onclick="toggleRotation()">🔄 Rotation</button>
-            <button class="control-btn" onclick="showFireworks()">🎆 Celebration</button>
+        <div id="controls">
+            <button onclick="animateShoot()">Shooting Motion</button>
+            <button onclick="animateDribble()">Dribbling</button>
+            <button onclick="resetPose()">Reset Pose</button>
+            <button onclick="toggleWireframe()">Toggle Wireframe</button>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
     <script>
-        // Global variables
-        let scene, camera, renderer, basketball, court, particles = [], lightingMode = 0;
-        let isRotating = true, animationId;
-        let basketballGroup, courtGroup, particleSystem, lebronGroup;
-
-        // Initialize the Three.js scene
+        // Scene setup
+        let scene, camera, renderer, controls;
+        let lebronModel, basketball, jerseyMesh, bodyMesh;
+        let animationMixer, currentAction;
+        let isWireframe = false;
+        
+        // Initialize the scene
         function init() {
             // Create scene
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x1a1a2e);
-
+            scene.background = new THREE.Color(0xf0f0f0);
+            
             // Create camera
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 10);
-            camera.lookAt(0, 0, 0);
-
+            camera.position.set(0, 1.8, 4);
+            
             // Create renderer
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
             document.getElementById('container').appendChild(renderer.domElement);
-
-            // Add lighting
+            
+            // Add controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 10;
+            controls.minDistance = 2;
+            
+            // Create lighting
             setupLighting();
-
-            // Create basketball court
-            createBasketballCourt();
-
+            
+            // Create LeBron model
+            createLeBronModel();
+            
             // Create basketball
             createBasketball();
-
-            // Create particle system
-            createParticleSystem();
-
-            // Create LeBron James figure
-            createLeBronJames();
-
-            // Add event listeners
-            window.addEventListener('resize', onWindowResize);
-            document.addEventListener('mousemove', onMouseMove);
-
-            // Hide loading screen
-            document.getElementById('loading').style.display = 'none';
-
+            
+            // Create floor
+            createFloor();
+            
             // Start animation loop
             animate();
         }
-
+        
         function setupLighting() {
             // Ambient light
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
             scene.add(ambientLight);
-
+            
             // Main directional light
             const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(10, 10, 5);
+            directionalLight.position.set(5, 10, 5);
             directionalLight.castShadow = true;
             directionalLight.shadow.mapSize.width = 2048;
             directionalLight.shadow.mapSize.height = 2048;
+            directionalLight.shadow.camera.near = 0.5;
+            directionalLight.shadow.camera.far = 50;
+            directionalLight.shadow.camera.left = -10;
+            directionalLight.shadow.camera.right = 10;
+            directionalLight.shadow.camera.top = 10;
+            directionalLight.shadow.camera.bottom = -10;
             scene.add(directionalLight);
-
-            // Spotlight for dramatic effect
-            const spotlight = new THREE.SpotLight(0xffd700, 1, 0, Math.PI / 6, 0.3, 1);
-            spotlight.position.set(0, 15, 0);
-            spotlight.target.position.set(0, 0, 0);
-            spotlight.castShadow = true;
-            scene.add(spotlight);
-            scene.add(spotlight.target);
-        }
-
-        function createBasketballCourt() {
-            courtGroup = new THREE.Group();
-
-            // Court floor
-            const courtGeometry = new THREE.PlaneGeometry(20, 30);
-            const courtMaterial = new THREE.MeshLambertMaterial({ 
-                color: 0x8B4513,
-                transparent: true,
-                opacity: 0.8
-            });
-            const courtFloor = new THREE.Mesh(courtGeometry, courtMaterial);
-            courtFloor.rotation.x = -Math.PI / 2;
-            courtFloor.position.y = -2;
-            courtFloor.receiveShadow = true;
-            courtGroup.add(courtFloor);
-
-            // Court lines
-            const lineGeometry = new THREE.BoxGeometry(20, 0.1, 0.2);
-            const lineMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
             
-            // Center line
-            const centerLine = new THREE.Mesh(lineGeometry, lineMaterial);
-            centerLine.position.set(0, -1.9, 0);
-            courtGroup.add(centerLine);
-
-            // Basketball hoop
-            const hoopGeometry = new THREE.TorusGeometry(1, 0.1, 8, 16);
-            const hoopMaterial = new THREE.MeshLambertMaterial({ color: 0xff6600 });
-            const hoop = new THREE.Mesh(hoopGeometry, hoopMaterial);
-            hoop.position.set(0, 3, -10);
-            hoop.rotation.x = Math.PI / 2;
-            courtGroup.add(hoop);
-
-            // Backboard
-            const backboardGeometry = new THREE.BoxGeometry(3, 2, 0.2);
-            const backboardMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-            const backboard = new THREE.Mesh(backboardGeometry, backboardMaterial);
-            backboard.position.set(0, 4, -10.5);
-            courtGroup.add(backboard);
-
-            scene.add(courtGroup);
+            // Fill light
+            const fillLight = new THREE.DirectionalLight(0x8888ff, 0.3);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+            
+            // Rim light
+            const rimLight = new THREE.DirectionalLight(0xffff88, 0.2);
+            rimLight.position.set(0, 5, -10);
+            scene.add(rimLight);
         }
-
+        
+        function createLeBronModel() {
+            const group = new THREE.Group();
+            
+            // Body proportions based on LeBron's build
+            const bodyGeometry = new THREE.CylinderGeometry(0.35, 0.25, 1.2, 12);
+            const skinMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            bodyMesh = new THREE.Mesh(bodyGeometry, skinMaterial);
+            bodyMesh.position.y = 1.4;
+            bodyMesh.castShadow = true;
+            group.add(bodyMesh);
+            
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.22, 16, 16);
+            const headMesh = new THREE.Mesh(headGeometry, skinMaterial);
+            headMesh.position.y = 2.3;
+            headMesh.castShadow = true;
+            group.add(headMesh);
+            
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+            const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.08, 2.35, 0.18);
+            group.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.08, 2.35, 0.18);
+            group.add(rightEye);
+            
+            // Arms
+            const armGeometry = new THREE.CylinderGeometry(0.08, 0.06, 0.8, 8);
+            
+            const leftArm = new THREE.Mesh(armGeometry, skinMaterial);
+            leftArm.position.set(-0.45, 1.6, 0);
+            leftArm.rotation.z = Math.PI / 6;
+            leftArm.castShadow = true;
+            group.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeometry, skinMaterial);
+            rightArm.position.set(0.45, 1.6, 0);
+            rightArm.rotation.z = -Math.PI / 6;
+            rightArm.castShadow = true;
+            group.add(rightArm);
+            
+            // Hands
+            const handGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+            
+            const leftHand = new THREE.Mesh(handGeometry, skinMaterial);
+            leftHand.position.set(-0.7, 1.2, 0);
+            leftHand.castShadow = true;
+            group.add(leftHand);
+            
+            const rightHand = new THREE.Mesh(handGeometry, skinMaterial);
+            rightHand.position.set(0.7, 1.2, 0);
+            rightHand.castShadow = true;
+            group.add(rightHand);
+            
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 1.0, 8);
+            
+            const leftLeg = new THREE.Mesh(legGeometry, skinMaterial);
+            leftLeg.position.set(-0.15, 0.3, 0);
+            leftLeg.castShadow = true;
+            group.add(leftLeg);
+            
+            const rightLeg = new THREE.Mesh(legGeometry, skinMaterial);
+            rightLeg.position.set(0.15, 0.3, 0);
+            rightLeg.castShadow = true;
+            group.add(rightLeg);
+            
+            // Feet/Shoes
+            const shoeGeometry = new THREE.BoxGeometry(0.15, 0.08, 0.35);
+            const shoeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            
+            const leftShoe = new THREE.Mesh(shoeGeometry, shoeMaterial);
+            leftShoe.position.set(-0.15, -0.15, 0.1);
+            leftShoe.castShadow = true;
+            group.add(leftShoe);
+            
+            const rightShoe = new THREE.Mesh(shoeGeometry, shoeMaterial);
+            rightShoe.position.set(0.15, -0.15, 0.1);
+            rightShoe.castShadow = true;
+            group.add(rightShoe);
+            
+            // Nike swoosh details on shoes
+            const swooshGeometry = new THREE.PlaneGeometry(0.06, 0.03);
+            const swooshMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            
+            const leftSwoosh = new THREE.Mesh(swooshGeometry, swooshMaterial);
+            leftSwoosh.position.set(-0.15, -0.12, 0.18);
+            group.add(leftSwoosh);
+            
+            const rightSwoosh = new THREE.Mesh(swooshGeometry, swooshMaterial);
+            rightSwoosh.position.set(0.15, -0.12, 0.18);
+            group.add(rightSwoosh);
+            
+            // Create Lakers Jersey
+            createJersey(group);
+            
+            lebronModel = group;
+            scene.add(lebronModel);
+        }
+        
+        function createJersey(parentGroup) {
+            // Jersey base - yellow Lakers color
+            const jerseyGeometry = new THREE.CylinderGeometry(0.4, 0.35, 0.8, 12);
+            const jerseyMaterial = new THREE.MeshLambertMaterial({ color: 0xFDB927 });
+            jerseyMesh = new THREE.Mesh(jerseyGeometry, jerseyMaterial);
+            jerseyMesh.position.y = 1.5;
+            jerseyMesh.castShadow = true;
+            parentGroup.add(jerseyMesh);
+            
+            // Purple trim on sides
+            const trimGeometry = new THREE.BoxGeometry(0.05, 0.8, 0.6);
+            const trimMaterial = new THREE.MeshLambertMaterial({ color: 0x552583 });
+            
+            const leftTrim = new THREE.Mesh(trimGeometry, trimMaterial);
+            leftTrim.position.set(-0.38, 1.5, 0);
+            parentGroup.add(leftTrim);
+            
+            const rightTrim = new THREE.Mesh(trimGeometry, trimMaterial);
+            rightTrim.position.set(0.38, 1.5, 0);
+            parentGroup.add(rightTrim);
+            
+            // "LAKERS" text on front
+            const lakersTextGeometry = new THREE.BoxGeometry(0.3, 0.08, 0.01);
+            const lakersTextMaterial = new THREE.MeshLambertMaterial({ color: 0x552583 });
+            const lakersText = new THREE.Mesh(lakersTextGeometry, lakersTextMaterial);
+            lakersText.position.set(0, 1.7, 0.41);
+            parentGroup.add(lakersText);
+            
+            // Number "23" on front
+            const numberGeometry = new THREE.BoxGeometry(0.15, 0.25, 0.01);
+            const numberMaterial = new THREE.MeshLambertMaterial({ color: 0x552583 });
+            
+            const number2 = new THREE.Mesh(numberGeometry, numberMaterial);
+            number2.position.set(-0.08, 1.4, 0.41);
+            parentGroup.add(number2);
+            
+            const number3 = new THREE.Mesh(numberGeometry, numberMaterial);
+            number3.position.set(0.08, 1.4, 0.41);
+            parentGroup.add(number3);
+            
+            // Jersey shorts - yellow with purple trim
+            const shortsGeometry = new THREE.CylinderGeometry(0.35, 0.3, 0.4, 12);
+            const shortsMesh = new THREE.Mesh(shortsGeometry, jerseyMaterial);
+            shortsMesh.position.y = 0.8;
+            shortsMesh.castShadow = true;
+            parentGroup.add(shortsMesh);
+            
+            // Purple waistband
+            const waistbandGeometry = new THREE.CylinderGeometry(0.36, 0.36, 0.05, 12);
+            const waistbandMesh = new THREE.Mesh(waistbandGeometry, trimMaterial);
+            waistbandMesh.position.y = 0.98;
+            parentGroup.add(waistbandMesh);
+            
+            // Side stripes on shorts
+            const stripeGeometry = new THREE.BoxGeometry(0.03, 0.4, 0.3);
+            
+            const leftStripe = new THREE.Mesh(stripeGeometry, trimMaterial);
+            leftStripe.position.set(-0.32, 0.8, 0);
+            parentGroup.add(leftStripe);
+            
+            const rightStripe = new THREE.Mesh(stripeGeometry, trimMaterial);
+            rightStripe.position.set(0.32, 0.8, 0);
+            parentGroup.add(rightStripe);
+            
+            // "wish" sponsor logo
+            const wishLogoGeometry = new THREE.BoxGeometry(0.12, 0.04, 0.01);
+            const wishLogoMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            const wishLogo = new THREE.Mesh(wishLogoGeometry, wishLogoMaterial);
+            wishLogo.position.set(-0.25, 1.85, 0.41);
+            parentGroup.add(wishLogo);
+            
+            // NBA logo
+            const nbaLogoGeometry = new THREE.BoxGeometry(0.06, 0.06, 0.01);
+            const nbaLogoMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+            const nbaLogo = new THREE.Mesh(nbaLogoGeometry, nbaLogoMaterial);
+            nbaLogo.position.set(0.25, 1.85, 0.41);
+            parentGroup.add(nbaLogo);
+            
+            // Arm sleeves/bands
+            const armBandGeometry = new THREE.CylinderGeometry(0.09, 0.09, 0.05, 8);
+            const armBandMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            
+            const leftArmBand = new THREE.Mesh(armBandGeometry, armBandMaterial);
+            leftArmBand.position.set(-0.45, 1.8, 0);
+            leftArmBand.rotation.z = Math.PI / 6;
+            parentGroup.add(leftArmBand);
+            
+            const rightArmBand = new THREE.Mesh(armBandGeometry, armBandMaterial);
+            rightArmBand.position.set(0.45, 1.8, 0);
+            rightArmBand.rotation.z = -Math.PI / 6;
+            parentGroup.add(rightArmBand);
+        }
+        
         function createBasketball() {
-            basketballGroup = new THREE.Group();
-
-            // Basketball sphere
-            const basketballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-            const basketballMaterial = new THREE.MeshLambertMaterial({ color: 0xff6600 });
-            basketball = new THREE.Mesh(basketballGeometry, basketballMaterial);
-            basketball.position.set(0, 2, 0);
+            const ballGeometry = new THREE.SphereGeometry(0.12, 16, 16);
+            const ballMaterial = new THREE.MeshLambertMaterial({ color: 0xD2691E });
+            basketball = new THREE.Mesh(ballGeometry, ballMaterial);
+            basketball.position.set(-0.8, 1.2, 0.2);
             basketball.castShadow = true;
-            basketballGroup.add(basketball);
-
+            
             // Basketball lines
-            const lineGeometry = new THREE.TorusGeometry(0.51, 0.02, 8, 16);
+            const lineGeometry = new THREE.TorusGeometry(0.12, 0.005, 4, 20);
             const lineMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
             
-            for (let i = 0; i < 3; i++) {
-                const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                line.position.copy(basketball.position);
-                line.rotation.y = (i * Math.PI) / 3;
-                basketballGroup.add(line);
-            }
-
-            scene.add(basketballGroup);
-        }
-
-        function createParticleSystem() {
-            const particleCount = 100;
-            const particleGeometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const velocities = new Float32Array(particleCount * 3);
-
-            for (let i = 0; i < particleCount; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * 20;
-                positions[i * 3 + 1] = Math.random() * 10;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-            }
-
-            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const line1 = new THREE.Mesh(lineGeometry, lineMaterial);
+            line1.position.copy(basketball.position);
+            line1.rotation.x = Math.PI / 2;
             
-            const particleMaterial = new THREE.PointsMaterial({
-                color: 0xffd700,
-                size: 0.1,
+            const line2 = new THREE.Mesh(lineGeometry, lineMaterial);
+            line2.position.copy(basketball.position);
+            line2.rotation.z = Math.PI / 2;
+            
+            scene.add(basketball);
+            scene.add(line1);
+            scene.add(line2);
+            
+            // Add "Spalding" text texture simulation
+            const textGeometry = new THREE.BoxGeometry(0.08, 0.02, 0.001);
+            const textMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            const spaldingText = new THREE.Mesh(textGeometry, textMaterial);
+            spaldingText.position.set(-0.8, 1.32, 0.2);
+            scene.add(spaldingText);
+        }
+        
+        function createFloor() {
+            const floorGeometry = new THREE.PlaneGeometry(20, 20);
+            const floorMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x8B4513,
                 transparent: true,
-                opacity: 0.6
+                opacity: 0.3
             });
-
-            particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-            scene.add(particleSystem);
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -0.2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+            
+            // Add court lines
+            const lineGeometry = new THREE.BoxGeometry(0.1, 0.01, 10);
+            const lineMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            
+            const centerLine = new THREE.Mesh(lineGeometry, lineMaterial);
+            centerLine.position.set(0, -0.19, 0);
+            centerLine.rotation.z = Math.PI / 2;
+            scene.add(centerLine);
         }
-
-        function createLeBronJames() {
-            lebronGroup = new THREE.Group();
-            // Make LeBron bigger by scaling up all parts
-            // Body (jersey)
-            const bodyGeometry = new THREE.CylinderGeometry(0.6, 0.75, 3, 16); // larger
-            const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0xfdd835 }); // Lakers gold
-            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-            body.position.set(0, 1.5, 2);
-            lebronGroup.add(body);
-
-            // Head
-            const headGeometry = new THREE.SphereGeometry(0.55, 16, 16); // larger
-            // Create a canvas texture for the face
-            const faceCanvas = document.createElement('canvas');
-            faceCanvas.width = 128;
-            faceCanvas.height = 128;
-            const faceCtx = faceCanvas.getContext('2d');
-            faceCtx.fillStyle = '#8d5524'; // base skin
-            faceCtx.fillRect(0, 0, 128, 128);
-            // Eyes
-            faceCtx.beginPath();
-            faceCtx.arc(44, 60, 8, 0, Math.PI * 2); // left eye
-            faceCtx.arc(84, 60, 8, 0, Math.PI * 2); // right eye
-            faceCtx.fillStyle = '#222';
-            faceCtx.fill();
-            // Eyebrows
-            faceCtx.strokeStyle = '#3e2723';
-            faceCtx.lineWidth = 4;
-            faceCtx.beginPath();
-            faceCtx.moveTo(34, 50); faceCtx.lineTo(54, 54);
-            faceCtx.moveTo(74, 54); faceCtx.lineTo(94, 50);
-            faceCtx.stroke();
-            // Mouth
-            faceCtx.beginPath();
-            faceCtx.arc(64, 90, 18, 0, Math.PI, false);
-            faceCtx.lineWidth = 5;
-            faceCtx.strokeStyle = '#3e2723';
-            faceCtx.stroke();
-            // Beard (bottom half arc)
-            faceCtx.beginPath();
-            faceCtx.arc(64, 80, 32, 0, Math.PI, false);
-            faceCtx.lineWidth = 10;
-            faceCtx.strokeStyle = '#3e2723';
-            faceCtx.stroke();
-            // Mustache
-            faceCtx.beginPath();
-            faceCtx.arc(64, 80, 18, Math.PI * 0.1, Math.PI * 0.9, false);
-            faceCtx.lineWidth = 6;
-            faceCtx.strokeStyle = '#3e2723';
-            faceCtx.stroke();
-            // Hair (top arc)
-            faceCtx.beginPath();
-            faceCtx.arc(64, 48, 40, Math.PI, 2 * Math.PI, false);
-            faceCtx.lineWidth = 18;
-            faceCtx.strokeStyle = '#3e2723';
-            faceCtx.stroke();
-            // Create texture
-            const faceTexture = new THREE.CanvasTexture(faceCanvas);
-            const headMaterial = new THREE.MeshLambertMaterial({ map: faceTexture });
-            const head = new THREE.Mesh(headGeometry, headMaterial);
-            head.position.set(0, 3.2, 2);
-            lebronGroup.add(head);
-
-            // Shoulders (spheres)
-            const shoulderGeometry = new THREE.SphereGeometry(0.22, 12, 12);
-            const shoulderMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 });
-            const leftShoulder = new THREE.Mesh(shoulderGeometry, shoulderMaterial);
-            leftShoulder.position.set(-0.6, 2.85, 2);
-            lebronGroup.add(leftShoulder);
-            const rightShoulder = new THREE.Mesh(shoulderGeometry, shoulderMaterial);
-            rightShoulder.position.set(0.6, 2.85, 2);
-            lebronGroup.add(rightShoulder);
-
-            // Arms (down by sides)
-            const armGeometry = new THREE.CylinderGeometry(0.13, 0.13, 1.6, 12);
-            const armMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 });
-            const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-            leftArm.position.set(-0.6, 1.95, 2);
-            leftArm.rotation.z = Math.PI / 2.1; // almost vertical
-            lebronGroup.add(leftArm);
-            const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-            rightArm.position.set(0.6, 1.95, 2);
-            rightArm.rotation.z = -Math.PI / 2.1;
-            lebronGroup.add(rightArm);
-
-            // Hands (palms as spheres)
-            const handGeometry = new THREE.SphereGeometry(0.16, 10, 10);
-            const handMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 });
-            const leftHand = new THREE.Mesh(handGeometry, handMaterial);
-            leftHand.position.set(-0.6, 1.15, 2);
-            lebronGroup.add(leftHand);
-            const rightHand = new THREE.Mesh(handGeometry, handMaterial);
-            rightHand.position.set(0.6, 1.15, 2);
-            lebronGroup.add(rightHand);
-
-            // Fingers (cylinders, 4 per hand)
-            const fingerGeometry = new THREE.CylinderGeometry(0.035, 0.035, 0.32, 8);
-            const fingerMaterial = new THREE.MeshLambertMaterial({ color: 0x8d5524 });
-            for (let i = 0; i < 4; i++) {
-                // Left hand fingers
-                const angle = Math.PI / 2 + (i - 1.5) * 0.18;
-                const finger = new THREE.Mesh(fingerGeometry, fingerMaterial);
-                finger.position.set(
-                    -0.6 + Math.cos(angle) * 0.13,
-                    1.01 + Math.sin(angle) * 0.13,
-                    2 + (i - 1.5) * 0.06
-                );
-                finger.rotation.z = angle;
-                lebronGroup.add(finger);
-                // Right hand fingers
-                const angleR = -Math.PI / 2 + (i - 1.5) * 0.18;
-                const fingerR = new THREE.Mesh(fingerGeometry, fingerMaterial);
-                fingerR.position.set(
-                    0.6 + Math.cos(angleR) * 0.13,
-                    1.01 + Math.sin(angleR) * 0.13,
-                    2 + (i - 1.5) * 0.06
-                );
-                fingerR.rotation.z = angleR;
-                lebronGroup.add(fingerR);
-            }
-
-            // Legs
-            const legGeometry = new THREE.CylinderGeometry(0.22, 0.22, 2, 12); // larger
-            const legMaterial = new THREE.MeshLambertMaterial({ color: 0x283593 }); // Lakers purple shorts
-            const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-            leftLeg.position.set(-0.28, 0.3, 2);
-            lebronGroup.add(leftLeg);
-            const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
-            rightLeg.position.set(0.28, 0.3, 2);
-            lebronGroup.add(rightLeg);
-
-            // Jersey number (23) as a white circle on the chest
-            const numberGeometry = new THREE.CircleGeometry(0.28, 16); // larger
-            const numberMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-            const numberCircle = new THREE.Mesh(numberGeometry, numberMaterial);
-            numberCircle.position.set(0, 2.2, 2.61);
-            lebronGroup.add(numberCircle);
-
-            // Add '23' to the back of the jersey using a canvas texture and sprite
-            const canvas = document.createElement('canvas');
-            canvas.width = 128;
-            canvas.height = 128;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, 128, 128);
-            ctx.font = 'bold 64px Arial';
-            ctx.fillStyle = '#fff';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('23', 64, 64);
-            const texture = new THREE.CanvasTexture(canvas);
-            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
-            const numberSprite = new THREE.Sprite(spriteMaterial);
-            numberSprite.scale.set(0.9, 0.9, 1); // size to fit the back
-            numberSprite.position.set(0, 2.2, 1.25); // slightly behind the body
-            lebronGroup.add(numberSprite);
-
-            // Add to scene
-            scene.add(lebronGroup);
+        
+        // Animation functions
+        function animateShoot() {
+            if (!lebronModel) return;
+            
+            // Animate shooting motion
+            const tl = new TimelineMax();
+            tl.to(lebronModel.rotation, 0.5, { y: Math.PI * 0.1 })
+              .to(lebronModel.children[4].rotation, 0.3, { z: -Math.PI * 0.3 }, 0) // Right arm up
+              .to(basketball.position, 0.8, { 
+                  x: 2, 
+                  y: 4, 
+                  z: -3,
+                  ease: "power2.out"
+              }, 0.2)
+              .to(basketball.rotation, 0.8, { 
+                  x: Math.PI * 2, 
+                  y: Math.PI * 2 
+              }, 0.2);
         }
-
+        
+        function animateDribble() {
+            if (!basketball) return;
+            
+            // Animate dribbling motion
+            const tl = new TimelineMax({ repeat: 3 });
+            tl.to(basketball.position, 0.3, { y: 0.5 })
+              .to(basketball.position, 0.3, { y: 1.2 })
+              .to(basketball.rotation, 0.6, { x: Math.PI * 2 }, 0);
+        }
+        
+        function resetPose() {
+            if (!lebronModel || !basketball) return;
+            
+            // Reset to original pose
+            lebronModel.rotation.set(0, 0, 0);
+            basketball.position.set(-0.8, 1.2, 0.2);
+            basketball.rotation.set(0, 0, 0);
+            
+            // Reset arm positions
+            lebronModel.children.forEach((child, index) => {
+                if (index === 3) { // Left arm
+                    child.rotation.z = Math.PI / 6;
+                } else if (index === 4) { // Right arm
+                    child.rotation.z = -Math.PI / 6;
+                }
+            });
+        }
+        
+        function toggleWireframe() {
+            isWireframe = !isWireframe;
+            scene.traverse((child) => {
+                if (child.isMesh && child.material) {
+                    child.material.wireframe = isWireframe;
+                }
+            });
+        }
+        
+        // Animation loop
         function animate() {
-            animationId = requestAnimationFrame(animate);
-
-            // Rotate basketball
+            requestAnimationFrame(animate);
+            
+            controls.update();
+            
+            // Subtle idle animation
+            if (lebronModel) {
+                lebronModel.position.y = 0.05 * Math.sin(Date.now() * 0.001) + 0;
+                
+                // Subtle breathing animation
+                lebronModel.children[0].scale.y = 1 + 0.02 * Math.sin(Date.now() * 0.002);
+            }
+            
+            // Rotate basketball slightly
             if (basketball) {
-                basketball.rotation.x += 0.01;
-                basketball.rotation.y += 0.01;
+                basketball.rotation.y += 0.005;
             }
-
-            // Animate particles
-            if (particleSystem) {
-                particleSystem.rotation.y += 0.001;
-            }
-
-            // Auto-rotate scene
-            if (isRotating) {
-                scene.rotation.y += 0.005;
-            }
-
+            
             renderer.render(scene, camera);
         }
-
-        // Event handlers
+        
+        // Handle window resize
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
-
-        function onMouseMove(event) {
-            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-            const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-            
-            camera.position.x = mouseX * 2;
-            camera.position.y = mouseY * 2 + 5;
-            camera.lookAt(0, 0, 0);
-        }
-
-        // Control functions
-        function animateBasketball() {
-            if (!basketball) return;
-
-            // Animate basketball shooting towards the hoop
-            const originalPosition = basketball.position.clone();
-            
-            const animate = () => {
-                basketball.position.z -= 0.5;
-                basketball.position.y += Math.sin(basketball.position.z * 0.1) * 0.1;
-                basketball.rotation.x += 0.2;
-                
-                if (basketball.position.z < -10) {
-                    // Reset position
-                    setTimeout(() => {
-                        basketball.position.copy(originalPosition);
-                    }, 1000);
-                    return;
-                }
-                
-                requestAnimationFrame(animate);
-            };
-            
-            animate();
-        }
-
-        function changeLighting() {
-            lightingMode = (lightingMode + 1) % 3;
-            
-            scene.children.forEach(child => {
-                if (child instanceof THREE.Light) {
-                    switch (lightingMode) {
-                        case 0:
-                            child.color.setHex(0xffffff);
-                            break;
-                        case 1:
-                            child.color.setHex(0xffd700);
-                            break;
-                        case 2:
-                            child.color.setHex(0x6a1b9a);
-                            break;
-                    }
-                }
-            });
-        }
-
-        function toggleRotation() {
-            isRotating = !isRotating;
-        }
-
-        function showFireworks() {
-            // Create temporary firework particles
-            for (let i = 0; i < 50; i++) {
-                const fireworkGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-                const fireworkMaterial = new THREE.MeshLambertMaterial({ 
-                    color: Math.random() * 0xffffff 
-                });
-                const firework = new THREE.Mesh(fireworkGeometry, fireworkMaterial);
-                
-                firework.position.set(
-                    (Math.random() - 0.5) * 10,
-                    Math.random() * 8 + 2,
-                    (Math.random() - 0.5) * 10
-                );
-                
-                scene.add(firework);
-                
-                // Remove after animation
-                setTimeout(() => {
-                    scene.remove(firework);
-                }, 2000);
-            }
-        }
-
+        
+        window.addEventListener('resize', onWindowResize);
+        
         // Initialize when page loads
         window.addEventListener('load', init);
+        
+        // Add GSAP for smooth animations (CDN)
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+        document.head.appendChild(script);
+        
+        // Add TimelineMax
+        script.onload = function() {
+            const tlScript = document.createElement('script');
+            tlScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TimelineMax.min.js';
+            document.head.appendChild(tlScript);
+        };
     </script>
 </body>
 </html>
