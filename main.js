@@ -304,44 +304,117 @@ function createLeBronModel() {
     rightCalf.position.set(0.16, 0.25, 0);
     rightCalf.castShadow = true;
     group.add(rightCalf);
-    // Shoes (with sole and laces)
-    const shoeGeometry = new THREE.BoxGeometry(0.15, 0.08, 0.35);
-    const shoeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    const soleMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
-    const leftShoe = new THREE.Mesh(shoeGeometry, shoeMaterial);
-    leftShoe.position.set(-0.15, -0.15, 0.1);
-    leftShoe.castShadow = true;
-    group.add(leftShoe);
-    const leftSole = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.02, 0.35), soleMaterial);
-    leftSole.position.set(-0.15, -0.19, 0.1);
-    group.add(leftSole);
-    const rightShoe = new THREE.Mesh(shoeGeometry, shoeMaterial);
-    rightShoe.position.set(0.15, -0.15, 0.1);
-    rightShoe.castShadow = true;
-    group.add(rightShoe);
-    const rightSole = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.02, 0.35), soleMaterial);
-    rightSole.position.set(0.15, -0.19, 0.1);
-    group.add(rightSole);
-    // Laces (simple cylinders)
-    for (let i = -2; i <= 2; i++) {
-        const lace = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.13, 8), new THREE.MeshLambertMaterial({ color: 0x222222 }));
-        lace.position.set(-0.15, -0.13, 0.07 + i * 0.04);
-        lace.rotation.z = Math.PI / 2;
-        group.add(lace);
-        const lace2 = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.13, 8), new THREE.MeshLambertMaterial({ color: 0x222222 }));
-        lace2.position.set(0.15, -0.13, 0.07 + i * 0.04);
-        lace2.rotation.z = Math.PI / 2;
-        group.add(lace2);
+    // Shoes (LeBron 21 "Wolf Grey")
+    function createLeBron21Shoe(isLeft) {
+        const shoeGroup = new THREE.Group();
+        // Main upper (light gray, slightly textured) - fallback to Cylinder + Spheres
+        const bodyGeometry = new THREE.CylinderGeometry(0.085, 0.085, 0.18, 16);
+        const toeCapGeometry = new THREE.SphereGeometry(0.085, 16, 12, 0, Math.PI);
+        const heelCapGeometry = new THREE.SphereGeometry(0.085, 16, 12, 0, Math.PI);
+        const upperMaterial = new THREE.MeshLambertMaterial({ color: 0xd3d3d3 });
+        const shoeBody = new THREE.Mesh(bodyGeometry, upperMaterial);
+        shoeBody.position.set(0, 0, 0);
+        shoeBody.castShadow = true;
+        shoeGroup.add(shoeBody);
+        const toeCap = new THREE.Mesh(toeCapGeometry, upperMaterial);
+        toeCap.position.set(0, 0.09, 0);
+        toeCap.rotation.x = Math.PI / 2;
+        shoeGroup.add(toeCap);
+        const heelCap = new THREE.Mesh(heelCapGeometry, upperMaterial);
+        heelCap.position.set(0, -0.09, 0);
+        heelCap.rotation.x = -Math.PI / 2;
+        shoeGroup.add(heelCap);
+        // Subtle texture lines (simulate with thin boxes)
+        for (let i = -2; i <= 2; i++) {
+            const line = new THREE.Mesh(
+                new THREE.BoxGeometry(0.16, 0.002, 0.01),
+                new THREE.MeshLambertMaterial({ color: 0xb0b0b0 })
+            );
+            line.position.set(0, 0.03 - i * 0.01, -0.13 + i * 0.04);
+            shoeGroup.add(line);
+        }
+        // Blue accent panel (side)
+        const bluePanelGeometry = new THREE.BoxGeometry(0.07, 0.08, 0.01);
+        const bluePanelMaterial = new THREE.MeshLambertMaterial({ color: 0x1ca9e6 });
+        const bluePanel = new THREE.Mesh(bluePanelGeometry, bluePanelMaterial);
+        bluePanel.position.set(0.06, 0.02, 0.09);
+        bluePanel.rotation.y = Math.PI / 8;
+        shoeGroup.add(bluePanel);
+        // Pink translucent sole
+        const soleGeometry = new THREE.BoxGeometry(0.18, 0.03, 0.36);
+        const soleMaterial = new THREE.MeshLambertMaterial({ color: 0xffb6c1, transparent: true, opacity: 0.7 });
+        const sole = new THREE.Mesh(soleGeometry, soleMaterial);
+        sole.position.set(0, -0.07, 0);
+        shoeGroup.add(sole);
+        // Blue/navy heel accent
+        const heelGeometry = new THREE.BoxGeometry(0.08, 0.03, 0.08);
+        const heelMaterial = new THREE.MeshLambertMaterial({ color: 0x1ca9e6 });
+        const heel = new THREE.Mesh(heelGeometry, heelMaterial);
+        heel.position.set(0, -0.03, -0.16);
+        shoeGroup.add(heel);
+        const navyGeometry = new THREE.BoxGeometry(0.08, 0.01, 0.08);
+        const navyMaterial = new THREE.MeshLambertMaterial({ color: 0x1a237e });
+        const navy = new THREE.Mesh(navyGeometry, navyMaterial);
+        navy.position.set(0, -0.01, -0.16);
+        shoeGroup.add(navy);
+        // Tongue (gray, with simulated text)
+        const tongueGeometry = new THREE.BoxGeometry(0.07, 0.04, 0.13);
+        const tongueMaterial = new THREE.MeshLambertMaterial({ color: 0xd3d3d3 });
+        const tongue = new THREE.Mesh(tongueGeometry, tongueMaterial);
+        tongue.position.set(0, 0.045, 0.07);
+        shoeGroup.add(tongue);
+        // "LBJ" and Nike text (simulated with small black boxes)
+        const textGeometry = new THREE.BoxGeometry(0.03, 0.01, 0.001);
+        const textMaterial = new THREE.MeshLambertMaterial({ color: 0x111111 });
+        const lbjText = new THREE.Mesh(textGeometry, textMaterial);
+        lbjText.position.set(0, 0.06, 0.13);
+        shoeGroup.add(lbjText);
+        // Laces (light gray, detailed)
+        for (let i = 0; i < 6; i++) {
+            const lace = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.004, 0.004, 0.11, 8),
+                new THREE.MeshLambertMaterial({ color: 0xd3d3d3 })
+            );
+            lace.position.set(0, 0.04 - i * 0.012, 0.04 + i * 0.018);
+            lace.rotation.z = Math.PI / 2;
+            shoeGroup.add(lace);
+        }
+        // Iridescent Nike swoosh (yellow-pink gradient, black tail)
+        const swooshShape = new THREE.Shape();
+        swooshShape.moveTo(-0.03, 0);
+        swooshShape.quadraticCurveTo(0.01, 0.03, 0.06, 0.01);
+        swooshShape.quadraticCurveTo(0.03, -0.01, 0.06, -0.03);
+        const swooshGeometry = new THREE.ExtrudeGeometry(swooshShape, { depth: 0.004, bevelEnabled: false });
+        // Gradient simulation: use yellow-pink for main, black for tail
+        const swooshMaterial = new THREE.MeshLambertMaterial({ color: 0xffe066 });
+        const swoosh = new THREE.Mesh(swooshGeometry, swooshMaterial);
+        swoosh.position.set(0.04, -0.01, 0.13);
+        swoosh.rotation.x = -Math.PI / 2.1;
+        shoeGroup.add(swoosh);
+        // Pink overlay for iridescent effect
+        const swooshOverlayMaterial = new THREE.MeshLambertMaterial({ color: 0xff69b4, transparent: true, opacity: 0.5 });
+        const swooshOverlay = new THREE.Mesh(swooshGeometry, swooshOverlayMaterial);
+        swooshOverlay.position.set(0.04, -0.012, 0.132);
+        swooshOverlay.rotation.x = -Math.PI / 2.1;
+        shoeGroup.add(swooshOverlay);
+        // Black tail
+        const tailGeometry = new THREE.BoxGeometry(0.02, 0.01, 0.004);
+        const tailMaterial = new THREE.MeshLambertMaterial({ color: 0x111111 });
+        const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+        tail.position.set(0.07, -0.01, 0.13);
+        shoeGroup.add(tail);
+        // Mirror for right shoe
+        if (!isLeft) shoeGroup.scale.x = -1;
+        return shoeGroup;
     }
-    // Nike swoosh details on shoes
-    const swooshGeometry = new THREE.PlaneGeometry(0.06, 0.03);
-    const swooshMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
-    const leftSwoosh = new THREE.Mesh(swooshGeometry, swooshMaterial);
-    leftSwoosh.position.set(-0.15, -0.12, 0.18);
-    group.add(leftSwoosh);
-    const rightSwoosh = new THREE.Mesh(swooshGeometry, swooshMaterial);
-    rightSwoosh.position.set(0.15, -0.12, 0.18);
-    group.add(rightSwoosh);
+    // Left shoe
+    const leftShoe = createLeBron21Shoe(true);
+    leftShoe.position.set(-0.15, -0.15, 0.1);
+    group.add(leftShoe);
+    // Right shoe
+    const rightShoe = createLeBron21Shoe(false);
+    rightShoe.position.set(0.15, -0.15, 0.1);
+    group.add(rightShoe);
     // Create Lakers Jersey
     createJersey(group);
     lebronModel = group;
