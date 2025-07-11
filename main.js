@@ -349,137 +349,100 @@ function createLeBronModel() {
 }
 
 function createJersey(parentGroup) {
-    // Jersey base - yellow Lakers color, with subtle bump (simulated fabric)
-    const jerseyGeometry = new THREE.CylinderGeometry(0.4, 0.35, 0.8, 64, 4, false);
+    // Jersey base - yellow mesh, more fitted shape
+    const jerseyGeometry = new THREE.CylinderGeometry(0.39, 0.36, 0.8, 80, 4, false);
     const jerseyMaterial = new THREE.MeshLambertMaterial({ color: 0xFDB927 });
     jerseyMesh = new THREE.Mesh(jerseyGeometry, jerseyMaterial);
     jerseyMesh.position.y = 1.5;
     jerseyMesh.castShadow = true;
-    // Simulate stitched texture with small dots
-    for (let i = 0; i < 32; i++) {
-        const stitch = new THREE.Mesh(
-            new THREE.SphereGeometry(0.008, 6, 4),
-            new THREE.MeshLambertMaterial({ color: 0xE6B800 })
-        );
-        const theta = (i / 32) * Math.PI * 2;
-        stitch.position.set(0.4 * Math.cos(theta), 1.9, 0.4 * Math.sin(theta));
-        parentGroup.add(stitch);
-    }
     parentGroup.add(jerseyMesh);
-    // Collar (purple trim, torus)
-    const collarGeometry = new THREE.TorusGeometry(0.4, 0.015, 16, 100);
-    const collarMaterial = new THREE.MeshLambertMaterial({ color: 0x552583 });
-    const collar = new THREE.Mesh(collarGeometry, collarMaterial);
-    collar.position.y = 1.9;
-    collar.rotation.x = Math.PI / 2;
-    parentGroup.add(collar);
-    // Armholes (purple trim, torus segments)
-    const armholeGeometry = new THREE.TorusGeometry(0.21, 0.012, 16, 60, Math.PI * 1.2);
-    const leftArmhole = new THREE.Mesh(armholeGeometry, collarMaterial);
-    leftArmhole.position.set(-0.32, 1.7, 0);
-    leftArmhole.rotation.z = Math.PI / 2.2;
-    parentGroup.add(leftArmhole);
-    const rightArmhole = new THREE.Mesh(armholeGeometry, collarMaterial);
-    rightArmhole.position.set(0.32, 1.7, 0);
-    rightArmhole.rotation.z = -Math.PI / 2.2;
-    parentGroup.add(rightArmhole);
-    // Side trims (thinner, more accurate)
-    const leftTrim = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.8, 0.6), collarMaterial);
-    leftTrim.position.set(-0.38, 1.5, 0);
-    parentGroup.add(leftTrim);
-    const rightTrim = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.8, 0.6), collarMaterial);
-    rightTrim.position.set(0.38, 1.5, 0);
-    parentGroup.add(rightTrim);
-    // Add white piping (thin white lines)
-    const pipingMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    const leftPiping = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.8, 0.61), pipingMaterial);
-    leftPiping.position.set(-0.36, 1.5, 0);
-    parentGroup.add(leftPiping);
-    const rightPiping = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.8, 0.61), pipingMaterial);
-    rightPiping.position.set(0.36, 1.5, 0);
-    parentGroup.add(rightPiping);
-    // "LAKERS" text (simulated as purple extruded text)
-    const lakersTextGeometry = new THREE.BoxGeometry(0.28, 0.07, 0.02);
-    const lakersTextMaterial = new THREE.MeshLambertMaterial({ color: 0x552583 });
-    const lakersText = new THREE.Mesh(lakersTextGeometry, lakersTextMaterial);
+    // Collar: white and purple layered trim
+    const collarWhite = new THREE.Mesh(
+        new THREE.TorusGeometry(0.39, 0.012, 16, 100),
+        new THREE.MeshLambertMaterial({ color: 0xffffff })
+    );
+    collarWhite.position.y = 1.9;
+    collarWhite.rotation.x = Math.PI / 2;
+    parentGroup.add(collarWhite);
+    const collarPurple = new THREE.Mesh(
+        new THREE.TorusGeometry(0.375, 0.008, 16, 100),
+        new THREE.MeshLambertMaterial({ color: 0x552583 })
+    );
+    collarPurple.position.y = 1.9;
+    collarPurple.rotation.x = Math.PI / 2;
+    parentGroup.add(collarPurple);
+    // Armholes: white and purple layered trim
+    function addArmhole(x) {
+        const armholeWhite = new THREE.Mesh(
+            new THREE.TorusGeometry(0.21, 0.012, 16, 60, Math.PI * 1.2),
+            new THREE.MeshLambertMaterial({ color: 0xffffff })
+        );
+        armholeWhite.position.set(x, 1.7, 0);
+        armholeWhite.rotation.z = x < 0 ? Math.PI / 2.2 : -Math.PI / 2.2;
+        parentGroup.add(armholeWhite);
+        const armholePurple = new THREE.Mesh(
+            new THREE.TorusGeometry(0.197, 0.008, 16, 60, Math.PI * 1.2),
+            new THREE.MeshLambertMaterial({ color: 0x552583 })
+        );
+        armholePurple.position.set(x, 1.7, 0);
+        armholePurple.rotation.z = x < 0 ? Math.PI / 2.2 : -Math.PI / 2.2;
+        parentGroup.add(armholePurple);
+    }
+    addArmhole(-0.32);
+    addArmhole(0.32);
+    // Side trims (thin white and purple stripes)
+    const leftTrimWhite = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.8, 0.6), new THREE.MeshLambertMaterial({ color: 0xffffff }));
+    leftTrimWhite.position.set(-0.38, 1.5, 0);
+    parentGroup.add(leftTrimWhite);
+    const leftTrimPurple = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.8, 0.6), new THREE.MeshLambertMaterial({ color: 0x552583 }));
+    leftTrimPurple.position.set(-0.36, 1.5, 0);
+    parentGroup.add(leftTrimPurple);
+    const rightTrimWhite = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.8, 0.6), new THREE.MeshLambertMaterial({ color: 0xffffff }));
+    rightTrimWhite.position.set(0.38, 1.5, 0);
+    parentGroup.add(rightTrimWhite);
+    const rightTrimPurple = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.8, 0.6), new THREE.MeshLambertMaterial({ color: 0x552583 }));
+    rightTrimPurple.position.set(0.36, 1.5, 0);
+    parentGroup.add(rightTrimPurple);
+    // "LAKERS" text (purple with white outline, slanted)
+    const lakersText = new THREE.Mesh(
+        new THREE.BoxGeometry(0.32, 0.09, 0.01),
+        new THREE.MeshLambertMaterial({ color: 0x552583 })
+    );
     lakersText.position.set(0, 1.7, 0.41);
-    lakersText.scale.set(1.1, 1, 1);
+    lakersText.rotation.z = -0.08;
     parentGroup.add(lakersText);
-    // Number "23" (simulated as two purple extruded numbers)
-    const number2 = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.18, 0.02), lakersTextMaterial);
-    number2.position.set(-0.06, 1.45, 0.41);
-    parentGroup.add(number2);
-    const number3 = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.18, 0.02), lakersTextMaterial);
-    number3.position.set(0.06, 1.45, 0.41);
-    parentGroup.add(number3);
-    // Add white outline to numbers (simulate with slightly larger white boxes behind)
-    const outlineMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    const number2Outline = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.01), outlineMaterial);
-    number2Outline.position.set(-0.06, 1.45, 0.405);
-    parentGroup.add(number2Outline);
-    const number3Outline = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.01), outlineMaterial);
-    number3Outline.position.set(0.06, 1.45, 0.405);
-    parentGroup.add(number3Outline);
-    // Shorts - yellow with purple trim, with subtle bump
-    const shortsGeometry = new THREE.CylinderGeometry(0.35, 0.3, 0.4, 48, 2, false);
-    const shortsMesh = new THREE.Mesh(shortsGeometry, jerseyMaterial);
-    shortsMesh.position.y = 0.8;
-    shortsMesh.castShadow = true;
-    parentGroup.add(shortsMesh);
-    // Purple waistband
-    const waistbandGeometry = new THREE.CylinderGeometry(0.36, 0.36, 0.05, 32);
-    const waistbandMesh = new THREE.Mesh(waistbandGeometry, collarMaterial);
-    waistbandMesh.position.y = 0.98;
-    parentGroup.add(waistbandMesh);
-    // Side stripes on shorts (purple with white piping)
-    const stripeGeometry = new THREE.BoxGeometry(0.02, 0.4, 0.3);
-    const leftStripe = new THREE.Mesh(stripeGeometry, collarMaterial);
-    leftStripe.position.set(-0.32, 0.8, 0);
-    parentGroup.add(leftStripe);
-    const rightStripe = new THREE.Mesh(stripeGeometry, collarMaterial);
-    rightStripe.position.set(0.32, 0.8, 0);
-    parentGroup.add(rightStripe);
-    const leftStripePiping = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.4, 0.31), pipingMaterial);
-    leftStripePiping.position.set(-0.31, 0.8, 0);
-    parentGroup.add(leftStripePiping);
-    const rightStripePiping = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.4, 0.31), pipingMaterial);
-    rightStripePiping.position.set(0.31, 0.8, 0);
-    parentGroup.add(rightStripePiping);
-    // Belt (simulated as a torus)
-    const beltGeometry = new THREE.TorusGeometry(0.36, 0.012, 16, 100);
-    const beltMaterial = collarMaterial;
-    const belt = new THREE.Mesh(beltGeometry, beltMaterial);
-    belt.position.y = 1.0;
-    belt.rotation.x = Math.PI / 2;
-    parentGroup.add(belt);
-    // "wish" sponsor logo (white box with blue text simulation)
-    const wishLogoGeometry = new THREE.BoxGeometry(0.12, 0.04, 0.01);
-    const wishLogoMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    const wishLogo = new THREE.Mesh(wishLogoGeometry, wishLogoMaterial);
-    wishLogo.position.set(-0.23, 1.85, 0.41);
-    parentGroup.add(wishLogo);
-    // NBA logo (red/blue/white stripes)
-    const nbaLogoGeometry = new THREE.BoxGeometry(0.06, 0.06, 0.01);
-    const nbaRed = new THREE.Mesh(nbaLogoGeometry, new THREE.MeshLambertMaterial({ color: 0xff0000 }));
-    nbaRed.position.set(0.23, 1.85, 0.41);
-    parentGroup.add(nbaRed);
-    const nbaBlue = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.06, 0.011), new THREE.MeshLambertMaterial({ color: 0x0033cc }));
-    nbaBlue.position.set(0.215, 1.85, 0.415);
-    parentGroup.add(nbaBlue);
-    const nbaWhite = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.06, 0.012), new THREE.MeshLambertMaterial({ color: 0xffffff }));
-    nbaWhite.position.set(0.23, 1.85, 0.416);
-    parentGroup.add(nbaWhite);
-    // Arm sleeves/bands (unchanged)
-    const armBandGeometry = new THREE.CylinderGeometry(0.09, 0.09, 0.05, 16);
-    const armBandMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
-    const leftArmBand = new THREE.Mesh(armBandGeometry, armBandMaterial);
-    leftArmBand.position.set(-0.35, 1.5, 0);
-    leftArmBand.rotation.z = Math.PI / 12;
-    parentGroup.add(leftArmBand);
-    const rightArmBand = new THREE.Mesh(armBandGeometry, armBandMaterial);
-    rightArmBand.position.set(0.35, 1.5, 0);
-    rightArmBand.rotation.z = -Math.PI / 12;
-    parentGroup.add(rightArmBand);
+    const lakersOutline = new THREE.Mesh(
+        new THREE.BoxGeometry(0.34, 0.11, 0.008),
+        new THREE.MeshLambertMaterial({ color: 0xffffff })
+    );
+    lakersOutline.position.set(0, 1.7, 0.406);
+    lakersOutline.rotation.z = -0.08;
+    parentGroup.add(lakersOutline);
+    // Nike swoosh (blue, top left)
+    const swooshGeometry = new THREE.PlaneGeometry(0.06, 0.03);
+    const swooshMaterial = new THREE.MeshLambertMaterial({ color: 0x1A237E });
+    const swoosh = new THREE.Mesh(swooshGeometry, swooshMaterial);
+    swoosh.position.set(-0.18, 1.82, 0.41);
+    swoosh.rotation.z = -0.2;
+    parentGroup.add(swoosh);
+    // Number "23" (purple with white outline, bold)
+    function addNumber(x) {
+        const num = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.22, 0.01), new THREE.MeshLambertMaterial({ color: 0x552583 }));
+        num.position.set(x, 1.45, 0.41);
+        parentGroup.add(num);
+        const numOutline = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.24, 0.008), new THREE.MeshLambertMaterial({ color: 0xffffff }));
+        numOutline.position.set(x, 1.45, 0.406);
+        parentGroup.add(numOutline);
+    }
+    addNumber(-0.09);
+    addNumber(0.09);
+    // NBA Authentics patch (bottom left)
+    const patchGeometry = new THREE.BoxGeometry(0.13, 0.04, 0.01);
+    const patchMaterial = new THREE.MeshLambertMaterial({ color: 0x222222 });
+    const patch = new THREE.Mesh(patchGeometry, patchMaterial);
+    patch.position.set(-0.18, 1.12, 0.41);
+    parentGroup.add(patch);
+    // Shorts and other details remain unchanged
 }
 
 function createBasketball() {
