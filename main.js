@@ -126,6 +126,8 @@ function createLeBronModel() {
     const headMesh = new THREE.Mesh(headGeometry, skinMaterial);
     headMesh.position.y = 2.3;
     headMesh.castShadow = true;
+    // Make head less round (more oval)
+    headMesh.scale.set(0.9, 1.18, 1.05); // slightly narrower, taller, and deeper
     group.add(headMesh);
     // Eyes (realistic: sclera, iris, pupil, cornea highlight)
     function createRealisticEye(x, y, z) {
