@@ -167,49 +167,76 @@ function createLeBronModel() {
     // Add facial features
     createFaceFeatures(group, skinMaterial);
     // Hair (same as before)
-    const hairMaterial = new THREE.MeshLambertMaterial({ color: 0x2C1810 });
-    const topHairGeometry = new THREE.SphereGeometry(0.2, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.6);
-    const topHair = new THREE.Mesh(topHairGeometry, hairMaterial);
-    topHair.position.set(0, 2.42, -0.08);
-    topHair.scale.set(1, 0.7, 1.2);
-    group.add(topHair);
-    const sideHairGeometry = new THREE.SphereGeometry(0.12, 16, 12);
-    const leftSideHair = new THREE.Mesh(sideHairGeometry, hairMaterial);
-    leftSideHair.position.set(-0.18, 2.35, -0.05);
-    leftSideHair.scale.set(1, 0.8, 0.9);
-    group.add(leftSideHair);
-    const rightSideHair = new THREE.Mesh(sideHairGeometry, hairMaterial);
-    rightSideHair.position.set(0.18, 2.35, -0.05);
-    rightSideHair.scale.set(1, 0.8, 0.9);
-    group.add(rightSideHair);
-    const backHairGeometry = new THREE.SphereGeometry(0.15, 16, 12);
-    const backHair = new THREE.Mesh(backHairGeometry, hairMaterial);
-    backHair.position.set(0, 2.38, -0.15);
-    backHair.scale.set(1.2, 0.6, 1);
-    group.add(backHair);
-    // Beard (same as before)
+    // Realistic hair: clusters, randomization, color variation
+    const baseHairColor = 0x2C1810;
+    const altHairColor = 0x1a1410;
+    // Top hair clusters
+    for (let i = 0; i < 18; i++) {
+        const color = (i % 3 === 0) ? altHairColor : baseHairColor;
+        const mat = new THREE.MeshLambertMaterial({ color });
+        const r = 0.09 + Math.random() * 0.04;
+        const geo = new THREE.SphereGeometry(r, 16, 12);
+        const mesh = new THREE.Mesh(geo, mat);
+        const angle = Math.PI * 2 * (i / 18);
+        mesh.position.set(
+            0.03 * Math.cos(angle) + (Math.random() - 0.5) * 0.04,
+            2.42 + (Math.random() - 0.5) * 0.03,
+            -0.08 + 0.09 * Math.sin(angle) + (Math.random() - 0.5) * 0.04
+        );
+        mesh.scale.set(1 + Math.random() * 0.3, 0.9 + Math.random() * 0.2, 1 + Math.random() * 0.3);
+        group.add(mesh);
+    }
+    // Side hair clusters
+    for (let i = 0; i < 8; i++) {
+        const color = (i % 2 === 0) ? altHairColor : baseHairColor;
+        const mat = new THREE.MeshLambertMaterial({ color });
+        const geo = new THREE.SphereGeometry(0.07 + Math.random() * 0.03, 12, 10);
+        const meshL = new THREE.Mesh(geo, mat);
+        meshL.position.set(-0.18 + (Math.random() - 0.5) * 0.04, 2.35 + (Math.random() - 0.5) * 0.03, -0.05 + (Math.random() - 0.5) * 0.04);
+        meshL.scale.set(1.18, 1.05, 1.1);
+        group.add(meshL);
+        const meshR = new THREE.Mesh(geo, mat);
+        meshR.position.set(0.18 + (Math.random() - 0.5) * 0.04, 2.35 + (Math.random() - 0.5) * 0.03, -0.05 + (Math.random() - 0.5) * 0.04);
+        meshR.scale.set(1.18, 1.05, 1.1);
+        group.add(meshR);
+    }
+    // Back hair clusters
+    for (let i = 0; i < 6; i++) {
+        const color = (i % 2 === 0) ? altHairColor : baseHairColor;
+        const mat = new THREE.MeshLambertMaterial({ color });
+        const geo = new THREE.SphereGeometry(0.09 + Math.random() * 0.03, 14, 10);
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(0 + (Math.random() - 0.5) * 0.04, 2.38 + (Math.random() - 0.5) * 0.03, -0.15 + (Math.random() - 0.5) * 0.04);
+        mesh.scale.set(1.35, 0.9, 1.18);
+        group.add(mesh);
+    }
+    // Beard (puffier)
     const beardMaterial = new THREE.MeshLambertMaterial({ color: 0x1A0F08 });
     const beardGeometry = new THREE.SphereGeometry(0.15, 16, 12, 0, Math.PI * 2, Math.PI * 0.3, Math.PI * 0.4);
     const beard = new THREE.Mesh(beardGeometry, beardMaterial);
     beard.position.set(0, 2.15, 0.15);
-    beard.scale.set(1.1, 1, 1.2);
+    beard.scale.set(1.35, 1.18, 1.35);
     group.add(beard);
     const mustacheGeometry = new THREE.BoxGeometry(0.12, 0.04, 0.06);
     const mustache = new THREE.Mesh(mustacheGeometry, beardMaterial);
     mustache.position.set(0, 2.25, 0.19);
+    mustache.scale.set(1.25, 1.18, 1.18);
     group.add(mustache);
     const goateeGeometry = new THREE.BoxGeometry(0.08, 0.12, 0.05);
     const goatee = new THREE.Mesh(goateeGeometry, beardMaterial);
     goatee.position.set(0, 2.08, 0.18);
+    goatee.scale.set(1.18, 1.25, 1.18);
     group.add(goatee);
     const sideBeardGeometry = new THREE.BoxGeometry(0.06, 0.1, 0.04);
     const leftSideBeard = new THREE.Mesh(sideBeardGeometry, beardMaterial);
     leftSideBeard.position.set(-0.12, 2.18, 0.16);
     leftSideBeard.rotation.y = -0.3;
+    leftSideBeard.scale.set(1.18, 1.18, 1.18);
     group.add(leftSideBeard);
     const rightSideBeard = new THREE.Mesh(sideBeardGeometry, beardMaterial);
     rightSideBeard.position.set(0.12, 2.18, 0.16);
     rightSideBeard.rotation.y = 0.3;
+    rightSideBeard.scale.set(1.18, 1.18, 1.18);
     group.add(rightSideBeard);
     const eyebrowGeometry = new THREE.BoxGeometry(0.08, 0.02, 0.03);
     const eyebrowMaterial = new THREE.MeshLambertMaterial({ color: 0x2C1810 });
